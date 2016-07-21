@@ -122,6 +122,7 @@ module Lograge
     keep_original_rails_log
 
     attach_to_action_controller
+    attach_to_active_job if defined?(ActiveJob)
     set_lograge_log_options
     support_deprecated_config # TODO: Remove with version 1.0
     set_formatter
@@ -135,6 +136,10 @@ module Lograge
 
   def set_formatter
     Lograge.formatter = lograge_config.formatter || Lograge::Formatters::KeyValue.new
+  end
+
+  def attach_to_active_job
+    Lograge::RequestLogSubscriber.attach_to :active_job
   end
 
   def attach_to_action_controller
